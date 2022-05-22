@@ -71,7 +71,7 @@ export class JsSignatureProvider implements SignatureProvider {
         if (this.transport) {
             console.log ('Sign with SecuX Hardware')
         } else {
-           signatures = requiredKeys.map((pub) => ecc.Signature.sign(signBuf, this.keys.get(convertLegacyPublicKey(pub))).toString())
+           signatures = requiredKeys.map((pub) => ecc.Signature.sign(signBuf, this.keys.get(convertLegacyPublicKey(pub))).toString(), this.transport)
         }
         return { signatures, serializedTransaction, serializedContextFreeData }
     }

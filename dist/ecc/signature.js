@@ -174,7 +174,7 @@ function Signature(r, s, i) {
 
     @return {Signature}
 */
-Signature.sign = function(data, privateKey, transport, encoding = 'utf8') {
+Signature.sign = function(data, privateKey, encoding = 'utf8') {
     if(typeof data === 'string') {
         data = Buffer.from(data, encoding)
     }
