@@ -34,13 +34,18 @@ export class JsSignatureProvider implements SignatureProvider {
 
     /** public keys */
     public availableKeys = [] as string[];
+    public transport: object
 
     /** @param privateKeys private keys to sign with */
-    constructor(privateKeys: string[]) {
-        for (const k of privateKeys) {
-            const pub = convertLegacyPublicKey(ecc.PrivateKey.fromString(k).toPublic().toString());
-            this.keys.set(pub, k);
-            this.availableKeys.push(pub);
+    constructor(privateKeys: string[], transport?: object) {
+        if (privateKeys === null && transport) {
+            this.transport = transport
+        } else {
+            for (const k of privateKeys) {
+                const pub = convertLegacyPublicKey(ecc.PrivateKey.fromString(k).toPublic().toString());
+                this.keys.set(pub, k);
+                this.availableKeys.push(pub);
+            }
         }
     }
 
@@ -62,9 +67,12 @@ export class JsSignatureProvider implements SignatureProvider {
                     new Uint8Array(32)
             ),
         ]);
-        const signatures = requiredKeys.map(
-            (pub) => ecc.Signature.sign(signBuf, this.keys.get(convertLegacyPublicKey(pub))).toString(),
-        );
-        return { signatures, serializedTransaction, serializedContextFreeData };
+        let signatures= [] 
+        if (this.transport) {
+            console.log ('Sign with SecuX Hardware')
+        } else {
+           signatures = requiredKeys.map((pub) => ecc.Signature.sign(signBuf, this.keys.get(convertLegacyPublicKey(pub))).toString())
+        }
+        return { signatures, serializedTransaction, serializedContextFreeData }
     }
 }

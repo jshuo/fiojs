@@ -1,8 +1,8 @@
 /**
  * @module Fio
  */
-import { prepareTransaction } from './transaction';
+import { prepareTransaction, prepareTransactionWithHardwareSign } from './transaction';
 import { accountHash } from './accountname';
 import { createSharedCipher } from './encryption-fio';
 
-export { prepareTransaction, accountHash, createSharedCipher };
+export { prepareTransaction, prepareTransactionWithHardwareSign, accountHash, createSharedCipher };

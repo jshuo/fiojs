@@ -48,7 +48,7 @@ describe('FIO', () => {
             textDecoder: new TextDecoder(), textEncoder: new TextEncoder()
         });
 
-        // console.log(JSON.stringify(signedTransaction))
+        console.log(JSON.stringify(signedTransaction))
         expect(signedTransaction).toEqual(preparedTransactionResult);
     });
 });
