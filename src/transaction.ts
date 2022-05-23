@@ -44,15 +44,16 @@ export async function prepareTransaction(
 }
 
 export async function prepareTransactionWithHardwareSign(
-    {transaction, chainId, transport, abiMap, textDecoder, textEncoder} : {
+    {transaction, chainId, privateKeys,transport, abiMap, textDecoder, textEncoder} : {
     transaction: any,
     chainId: string,
     transport: object,
+    privateKeys: string[],
     abiMap: Map<string, any>,
     textDecoder?: TextDecoder,
     textEncoder?: TextEncoder,
 }) {
-    const signatureProvider = new JsSignatureProvider(null, transport);
+    const signatureProvider = new JsSignatureProvider(privateKeys, transport);
     const authorityProvider = signAllAuthorityProvider;
 
     const abiProvider : AbiProvider = {

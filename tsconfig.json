@@ -4,7 +4,7 @@
         "module": "CommonJS",
         "outDir": "dist",
         "alwaysStrict": true,
-        "sourceMap": true,
+        "sourceMap": false,
         "noImplicitAny": true,
         "moduleResolution": "node",
         "declaration": true,
@@ -17,6 +17,6 @@
     },
     "include": [
         "src/**/*.ts",
-        "src/**/*.js",
+        "src/ecc/*.js",
     ]
 }
