@@ -277,13 +277,13 @@ function Signature(r, s, i) {
 
     @return {Signature}
 */
-Signature.sign = function(data, privateKey, encoding = 'utf8') {
+Signature.sign = function(data, privateKey, transport, encoding = 'utf8') {
     if(typeof data === 'string') {
         data = Buffer.from(data, encoding)
     }
     assert(Buffer.isBuffer(data), 'data is a required String or Buffer')
     data = hash.sha256(data)
-    return Signature.signHash(data, privateKey)
+    return Signature.signHash(data, privateKey, transport)
 }
 
 /**
@@ -295,7 +295,7 @@ Signature.sign = function(data, privateKey, encoding = 'utf8') {
 
     @return {Signature}
 */
-Signature.signHash = function(dataSha256, privateKey, encoding = 'hex') {
+Signature.signHash = function(dataSha256, privateKey, transport, encoding = 'hex') {
     if(typeof dataSha256 === 'string') {
         dataSha256 = Buffer.from(dataSha256, encoding)
     }
@@ -312,6 +312,7 @@ Signature.signHash = function(dataSha256, privateKey, encoding = 'hex') {
     while (true) {
       ecsignature = ecdsa.sign(curve, dataSha256, privateKey.d, nonce++);
       der = ecsignature.toDER();
+      console.log(der.length)
       lenR = der[3];
       lenS = der[5 + lenR];
       if (lenR === 32 && lenS === 32) {
@@ -329,15 +330,20 @@ Signature.signHash = function(dataSha256, privateKey, encoding = 'hex') {
     const hashedTx = []
     const FIO_ACCOUNT_PATH = `m/44'/235'/0'/0/0`
     hashedTx.push(dataSha256)
-    const txBuffer = buildTxBuffer([toBip32StringPath(FIO_ACCOUNT_PATH)], hashedTx)
-    // if (transport) {
-    //   const rsp = await transport.Send(0x70, 0xa4, 0, 0, Buffer.concat([txBuffer]))
-    //   if (rsp.status !== StatusCode.SUCCESS) throw new TransportStatusError(rsp.status)
-    //   if (rsp.dataLength !== SIGNATURE_LENGTH) throw Error('Invalid length Signature')
-    // }
+    const txBuffer = buildTxBuffer([FIO_ACCOUNT_PATH], hashedTx)
+    if (transport) {
+        transport.Send(0x70, 0xa4, 0, 0, Buffer.concat([txBuffer])).then((rsp)=> {
+          console.log(rsp.data.toString('hex'))
+          // console.log(Buffer.concat([Buffer.from((rsp.data[64]+31).toString(16), 'hex'),rsp.data.slice[0,63]]).toString('hex'))
+          console.log(Buffer.concat([Buffer.from(i.toString(16), 'hex'), ecsignature.r.toBuffer(), ecsignature.s.toBuffer()]).toString('hex'))  
 
+        //     return Signature.fromBuffer(Buffer.concat([Buffer.from((rsp.data[64]+31).toString(16), 'hex'),rsp.data.slice[0,63]]))
+         return Signature.fromBuffer(Buffer.concat([Buffer.from(i.toString(16), 'hex'), ecsignature.r.toBuffer(), ecsignature.s.toBuffer()]))
 
-    return Signature.fromBuffer(Buffer.concat([Buffer.from(i.toString(16), 'hex'), ecsignature.r.toBuffer(), ecsignature.s.toBuffer()]))
+        })
+    } else {
+        return Signature.fromBuffer(Buffer.concat([Buffer.from(i.toString(16), 'hex'), ecsignature.r.toBuffer(), ecsignature.s.toBuffer()]))
+    }
 };
 
 Signature.fromBuffer = function(buf) {
