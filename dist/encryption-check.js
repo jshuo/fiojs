@@ -68,4 +68,3 @@ function checkDecrypt(secret, message) {
     return Buffer.concat([cipher.update(C, 'binary'), cipher.final()]);
 }
 exports.checkDecrypt = checkDecrypt;
-//# sourceMappingURL=encryption-check.js.map

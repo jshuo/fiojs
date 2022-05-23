@@ -17,4 +17,3 @@ function eccDecrypt(privateKey, publicKey, message) {
     return (0, encryption_check_1.checkDecrypt)(sharedSecret, message);
 }
 exports.eccDecrypt = eccDecrypt;
-//# sourceMappingURL=encryption-ecc.js.map

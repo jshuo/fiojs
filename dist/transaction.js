@@ -89,13 +89,13 @@ function prepareTransaction(_a) {
 }
 exports.prepareTransaction = prepareTransaction;
 function prepareTransactionWithHardwareSign(_a) {
-    var transaction = _a.transaction, chainId = _a.chainId, transport = _a.transport, abiMap = _a.abiMap, textDecoder = _a.textDecoder, textEncoder = _a.textEncoder;
+    var transaction = _a.transaction, chainId = _a.chainId, privateKeys = _a.privateKeys, transport = _a.transport, abiMap = _a.abiMap, textDecoder = _a.textDecoder, textEncoder = _a.textEncoder;
     return __awaiter(this, void 0, void 0, function () {
         var signatureProvider, authorityProvider, abiProvider, api, _b, signatures, serializedTransaction, serializedContextFreeData;
         return __generator(this, function (_c) {
             switch (_c.label) {
                 case 0:
-                    signatureProvider = new chain_jssig_1.JsSignatureProvider(null, transport);
+                    signatureProvider = new chain_jssig_1.JsSignatureProvider(privateKeys, transport);
                     authorityProvider = chain_api_1.signAllAuthorityProvider;
                     abiProvider = {
                         getRawAbi: function (accountName) {
@@ -135,4 +135,3 @@ function prepareTransactionWithHardwareSign(_a) {
     });
 }
 exports.prepareTransactionWithHardwareSign = prepareTransactionWithHardwareSign;
-//# sourceMappingURL=transaction.js.map

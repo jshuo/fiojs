@@ -66,4 +66,3 @@ function stringFromUInt64T(temp) {
     }
     return result;
 }
-//# sourceMappingURL=accountname.js.map

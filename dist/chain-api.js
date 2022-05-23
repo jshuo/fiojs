@@ -449,4 +449,3 @@ exports.signAllAuthorityProvider = {
         });
     }
 };
-//# sourceMappingURL=chain-api.js.map

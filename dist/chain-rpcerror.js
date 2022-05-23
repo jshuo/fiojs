@@ -41,4 +41,3 @@ var RpcError = /** @class */ (function (_super) {
     return RpcError;
 }(Error));
 exports.RpcError = RpcError;
-//# sourceMappingURL=chain-rpcerror.js.map

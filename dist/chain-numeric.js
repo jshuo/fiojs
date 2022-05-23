@@ -444,4 +444,3 @@ function arrayToHex(data) {
     return result;
 }
 exports.arrayToHex = arrayToHex;
-//# sourceMappingURL=chain-numeric.js.map

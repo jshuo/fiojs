@@ -11,4 +11,3 @@ var accountname_1 = require("./accountname");
 Object.defineProperty(exports, "accountHash", { enumerable: true, get: function () { return accountname_1.accountHash; } });
 var encryption_fio_1 = require("./encryption-fio");
 Object.defineProperty(exports, "createSharedCipher", { enumerable: true, get: function () { return encryption_fio_1.createSharedCipher; } });
-//# sourceMappingURL=fio-api.js.map

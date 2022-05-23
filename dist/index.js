@@ -17,4 +17,3 @@ var Serialize = require("./chain-serialize");
 exports.Serialize = Serialize;
 var Ecc = require('./ecc');
 exports.Ecc = Ecc;
-//# sourceMappingURL=index.js.map

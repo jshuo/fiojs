@@ -1083,4 +1083,3 @@ function deserializeAction(contract, account, name, authorization, data, textEnc
     };
 }
 exports.deserializeAction = deserializeAction;
-//# sourceMappingURL=chain-serialize.js.map
