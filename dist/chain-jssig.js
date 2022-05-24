@@ -67,27 +67,24 @@ var createHash = require('create-hash');
 var bippath = require('bip32-path');
 //@ts-ignore
 var FIO_ACCOUNT_PATH = "m/44'/235'/0'/0/0";
-function buildTxBuffer(paths, txs, tp, chainId) {
-    if (paths.length != txs.length)
-        throw Error('Inconsistent length of paths and txs');
+function buildTxBuffer(bip32path, message, tp, chainId) {
     var head = [], data = [];
-    for (var i = 0; i < paths.length; i++) {
-        var headerBuffer = Buffer.alloc(4);
-        headerBuffer.writeUInt16LE(tp, 0);
-        headerBuffer.writeUInt16LE(chainId, 2);
-        var patharrary = bippath.fromString(FIO_ACCOUNT_PATH).toPathArray();
-        var pathBuffer = Buffer.alloc(4 * patharrary.length);
-        for (var i_1 = 0; i_1 < patharrary.length; i_1++) {
-            pathBuffer.writeUInt32LE(patharrary[i_1], i_1 * 4);
-        }
-        head.push(Buffer.concat([Buffer.from([patharrary.length * 4 + 4]), headerBuffer, pathBuffer]));
-        // fixed 2 byte length
-        var preparedTxLenBuf = Buffer.alloc(2);
-        preparedTxLenBuf.writeUInt16BE(txs[i].length, 0);
-        //@ts-ignore
-        data.push(Buffer.concat([preparedTxLenBuf, txs[i]]));
+    var headerBuffer = Buffer.alloc(4);
+    headerBuffer.writeUInt16LE(tp, 0);
+    headerBuffer.writeUInt16LE(chainId, 2);
+    var patharrary = bippath.fromString(bip32path).toPathArray();
+    var pathBuffer = Buffer.alloc(4 * patharrary.length);
+    for (var i = 0; i < patharrary.length; i++) {
+        pathBuffer.writeUInt32LE(patharrary[i], i * 4);
     }
-    return Buffer.concat(__spreadArray(__spreadArray([Buffer.from([paths.length])], __read(head), false), __read(data), false));
+    head.push(Buffer.concat([Buffer.from([patharrary.length * 4 + 4]), headerBuffer, pathBuffer]));
+    // fixed 2 byte length
+    var preparedTxLenBuf = Buffer.alloc(2);
+    preparedTxLenBuf.writeUInt16BE(message.length, 0);
+    //@ts-ignore
+    data.push(Buffer.concat([preparedTxLenBuf, message]));
+    var singlepath = 1;
+    return Buffer.concat(__spreadArray(__spreadArray([Buffer.from([singlepath])], __read(head), false), __read(data), false));
 }
 function hexToUint8Array(hex) {
     if (typeof hex !== 'string') {
@@ -139,9 +136,8 @@ var JsSignatureProvider = /** @class */ (function () {
                             new Buffer(serializedContextFreeData ? hexToUint8Array(ecc.sha256(serializedContextFreeData)) : new Uint8Array(32))
                         ]);
                         SIGNATURE_LENGTH = 65;
-                        hashedTx = [];
-                        hashedTx.push(Buffer.from(createHash('sha256').update(signBuf).digest()));
-                        txBuffer = buildTxBuffer([FIO_ACCOUNT_PATH], hashedTx);
+                        hashedTx = Buffer.from(createHash('sha256').update(signBuf).digest());
+                        txBuffer = buildTxBuffer(FIO_ACCOUNT_PATH, hashedTx);
                         return [4 /*yield*/, this.transport.Send(0x70, 0xa4, 0, 0, Buffer.concat([txBuffer]))];
                     case 1:
                         rsp = _b.sent();

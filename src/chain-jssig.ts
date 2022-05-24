@@ -10,30 +10,26 @@ var bippath = require('bip32-path')
 
 //@ts-ignore
 const FIO_ACCOUNT_PATH = `m/44'/235'/0'/0/0`
-function buildTxBuffer(paths, txs, tp, chainId) {
-  if (paths.length != txs.length) throw Error('Inconsistent length of paths and txs')
-
+function buildTxBuffer(bip32path, message, tp, chainId) {
   const head = [],
     data = []
-  for (let i = 0; i < paths.length; i++) {
-    const headerBuffer = Buffer.alloc(4)
-    headerBuffer.writeUInt16LE(tp, 0)
-    headerBuffer.writeUInt16LE(chainId, 2)
-    let patharrary = bippath.fromString(FIO_ACCOUNT_PATH).toPathArray()
-    const pathBuffer = Buffer.alloc(4 * patharrary.length)
-    for (let i = 0; i < patharrary.length; i++) {
-      pathBuffer.writeUInt32LE(patharrary[i], i * 4)
-    }
-    head.push(Buffer.concat([Buffer.from([patharrary.length * 4 + 4]), headerBuffer, pathBuffer]))
-
-    // fixed 2 byte length
-    const preparedTxLenBuf = Buffer.alloc(2)
-    preparedTxLenBuf.writeUInt16BE(txs[i].length, 0)
-    //@ts-ignore
-    data.push(Buffer.concat([preparedTxLenBuf, txs[i]]))
+  const headerBuffer = Buffer.alloc(4)
+  headerBuffer.writeUInt16LE(tp, 0)
+  headerBuffer.writeUInt16LE(chainId, 2)
+  let patharrary = bippath.fromString(bip32path).toPathArray()
+  const pathBuffer = Buffer.alloc(4 * patharrary.length)
+  for (let i = 0; i < patharrary.length; i++) {
+    pathBuffer.writeUInt32LE(patharrary[i], i * 4)
   }
+  head.push(Buffer.concat([Buffer.from([patharrary.length * 4 + 4]), headerBuffer, pathBuffer]))
 
-  return Buffer.concat([Buffer.from([paths.length]), ...head, ...data])
+  // fixed 2 byte length
+  const preparedTxLenBuf = Buffer.alloc(2)
+  preparedTxLenBuf.writeUInt16BE(message.length, 0)
+  //@ts-ignore
+  data.push(Buffer.concat([preparedTxLenBuf, message]))
+  const singlepath = 1 
+  return Buffer.concat([Buffer.from([singlepath]), ...head, ...data])
 }
 
 function hexToUint8Array(hex: string) {
@@ -82,10 +78,8 @@ export class JsSignatureProvider implements SignatureProvider {
       new Buffer(serializedContextFreeData ? hexToUint8Array(ecc.sha256(serializedContextFreeData)) : new Uint8Array(32))
     ])
     const SIGNATURE_LENGTH = 65
-    const hashedTx = []
-    hashedTx.push(Buffer.from(createHash('sha256').update(signBuf).digest()))
-
-    const txBuffer = buildTxBuffer([FIO_ACCOUNT_PATH], hashedTx)
+    const hashedTx = Buffer.from(createHash('sha256').update(signBuf).digest())
+    const txBuffer = buildTxBuffer(FIO_ACCOUNT_PATH, hashedTx)
     const rsp = await this.transport.Send(0x70, 0xa4, 0, 0, Buffer.concat([txBuffer]))
     console.log(rsp.data.toString('hex'))
     const buf = Buffer.concat([Buffer.from((rsp.data[64] + 31).toString(16), 'hex'), rsp.data.slice(0, 64)])
