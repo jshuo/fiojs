@@ -176,9 +176,9 @@ export class JsSignatureProvider implements SignatureProvider {
         const txBuffer = buildTxBuffer([FIO_ACCOUNT_PATH], hashedTx)
         const rsp = await this.transport.Send(0x70, 0xa4, 0, 0, Buffer.concat([txBuffer]))
         console.log(rsp.data.toString('hex'))
-        buf = Buffer.concat([Buffer.from((rsp.data[64] + 31).toString(16), 'hex'), rsp.data.slice(0, 64)]);
+        const buf = Buffer.concat([Buffer.from((rsp.data[64] + 31).toString(16), 'hex'), rsp.data.slice(0, 64)]);
         console.log(ecc.Signature.fromBuffer(buf).toString());
-        signatures = [ecc.Signature.fromBuffer(buf).toString()];
+        const signatures = [ecc.Signature.fromBuffer(buf).toString()];
         return { signatures, serializedTransaction, serializedContextFreeData };
     }
 }
