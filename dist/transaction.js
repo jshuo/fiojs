@@ -1,10 +1,9 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -36,7 +35,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.prepareTransactionWithHardwareSign = exports.prepareTransaction = void 0;
 var chain_api_1 = require("./chain-api");
 var chain_jssig_1 = require("./chain-jssig");
 var chain_numeric_1 = require("./chain-numeric");
@@ -57,9 +55,9 @@ function prepareTransaction(_a) {
                                 return __generator(this, function (_a) {
                                     rawAbi = abiMap.get(accountName);
                                     if (!rawAbi) {
-                                        throw new Error("Missing ABI for account ".concat(accountName));
+                                        throw new Error("Missing ABI for account " + accountName);
                                     }
-                                    abi = (0, chain_numeric_1.base64ToBinary)(rawAbi.abi);
+                                    abi = chain_numeric_1.base64ToBinary(rawAbi.abi);
                                     binaryAbi = { accountName: rawAbi.account_name, abi: abi };
                                     return [2 /*return*/, binaryAbi];
                                 });
@@ -67,12 +65,7 @@ function prepareTransaction(_a) {
                         }
                     };
                     api = new chain_api_1.Api({
-                        signatureProvider: signatureProvider,
-                        authorityProvider: authorityProvider,
-                        abiProvider: abiProvider,
-                        chainId: chainId,
-                        textDecoder: textDecoder,
-                        textEncoder: textEncoder
+                        signatureProvider: signatureProvider, authorityProvider: authorityProvider, abiProvider: abiProvider, chainId: chainId, textDecoder: textDecoder, textEncoder: textEncoder
                     });
                     return [4 /*yield*/, api.transact(transaction)];
                 case 1:
@@ -80,8 +73,8 @@ function prepareTransaction(_a) {
                     return [2 /*return*/, {
                             signatures: signatures,
                             compression: 0,
-                            packed_context_free_data: (0, chain_numeric_1.arrayToHex)(serializedContextFreeData || new Uint8Array(0)),
-                            packed_trx: (0, chain_numeric_1.arrayToHex)(serializedTransaction),
+                            packed_context_free_data: chain_numeric_1.arrayToHex(serializedContextFreeData || new Uint8Array(0)),
+                            packed_trx: chain_numeric_1.arrayToHex(serializedTransaction),
                         }];
             }
         });
@@ -104,9 +97,9 @@ function prepareTransactionWithHardwareSign(_a) {
                                 return __generator(this, function (_a) {
                                     rawAbi = abiMap.get(accountName);
                                     if (!rawAbi) {
-                                        throw new Error("Missing ABI for account ".concat(accountName));
+                                        throw new Error("Missing ABI for account " + accountName);
                                     }
-                                    abi = (0, chain_numeric_1.base64ToBinary)(rawAbi.abi);
+                                    abi = chain_numeric_1.base64ToBinary(rawAbi.abi);
                                     binaryAbi = { accountName: rawAbi.account_name, abi: abi };
                                     return [2 /*return*/, binaryAbi];
                                 });
@@ -114,12 +107,7 @@ function prepareTransactionWithHardwareSign(_a) {
                         }
                     };
                     api = new chain_api_1.Api({
-                        signatureProvider: signatureProvider,
-                        authorityProvider: authorityProvider,
-                        abiProvider: abiProvider,
-                        chainId: chainId,
-                        textDecoder: textDecoder,
-                        textEncoder: textEncoder
+                        signatureProvider: signatureProvider, authorityProvider: authorityProvider, abiProvider: abiProvider, chainId: chainId, textDecoder: textDecoder, textEncoder: textEncoder
                     });
                     return [4 /*yield*/, api.transact(transaction)];
                 case 1:
@@ -127,8 +115,8 @@ function prepareTransactionWithHardwareSign(_a) {
                     return [2 /*return*/, {
                             signatures: signatures,
                             compression: 0,
-                            packed_context_free_data: (0, chain_numeric_1.arrayToHex)(serializedContextFreeData || new Uint8Array(0)),
-                            packed_trx: (0, chain_numeric_1.arrayToHex)(serializedTransaction),
+                            packed_context_free_data: chain_numeric_1.arrayToHex(serializedContextFreeData || new Uint8Array(0)),
+                            packed_trx: chain_numeric_1.arrayToHex(serializedTransaction),
                         }];
             }
         });

@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createSharedCipher = exports.deserialize = exports.serialize = void 0;
 var encryption_check_1 = require("./encryption-check");
 var ser = require("./chain-serialize");
 var _a = require('./ecc'), PublicKey = _a.PublicKey, PrivateKey = _a.PrivateKey;
@@ -46,7 +45,7 @@ var SharedCipher = /** @class */ (function () {
         var buffer = new ser.SerialBuffer({ textEncoder: this.textEncoder, textDecoder: this.textDecoder });
         serialize(buffer, fioContentType, content);
         var message = Buffer.from(buffer.asUint8Array());
-        var cipherbuffer = (0, encryption_check_1.checkEncrypt)(this.sharedSecret, message, IV);
+        var cipherbuffer = encryption_check_1.checkEncrypt(this.sharedSecret, message, IV);
         // checkDecrypt(this.sharedSecret, cipherbuffer);
         return cipherbuffer.toString('base64');
     };
@@ -58,7 +57,7 @@ var SharedCipher = /** @class */ (function () {
         @return {object} decrypted FIO object
     */
     SharedCipher.prototype.decrypt = function (fioContentType, content) {
-        var message = (0, encryption_check_1.checkDecrypt)(this.sharedSecret, Buffer.from(content, 'base64'));
+        var message = encryption_check_1.checkDecrypt(this.sharedSecret, Buffer.from(content, 'base64'));
         var messageArray = Uint8Array.from(message);
         var buffer = new ser.SerialBuffer({ array: messageArray, textEncoder: this.textEncoder, textDecoder: this.textDecoder });
         return deserialize(buffer, fioContentType);

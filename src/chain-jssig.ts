@@ -8,9 +8,10 @@ const ecc = require('./ecc')
 var createHash = require('create-hash')
 var bippath = require('bip32-path')
 
-//@ts-ignore
+
 const FIO_ACCOUNT_PATH = `m/44'/235'/0'/0/0`
-function buildTxBuffer(bip32path, message, tp, chainId) {
+//@ts-ignore
+function buildTxBuffer(bip32path, message, tp=0, chainId=0) {
   const head = [],
     data = []
   const headerBuffer = Buffer.alloc(4)
@@ -79,7 +80,9 @@ export class JsSignatureProvider implements SignatureProvider {
     ])
     const SIGNATURE_LENGTH = 65
     const hashedTx = Buffer.from(createHash('sha256').update(signBuf).digest())
+    //@ts-ignore
     const txBuffer = buildTxBuffer(FIO_ACCOUNT_PATH, hashedTx)
+    //@ts-ignore
     const rsp = await this.transport.Send(0x70, 0xa4, 0, 0, Buffer.concat([txBuffer]))
     console.log(rsp.data.toString('hex'))
     const buf = Buffer.concat([Buffer.from((rsp.data[64] + 31).toString(16), 'hex'), rsp.data.slice(0, 64)])

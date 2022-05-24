@@ -30,28 +30,21 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-        if (ar || !(i in from)) {
-            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-            ar[i] = from[i];
-        }
-    }
-    return to.concat(ar || Array.prototype.slice.call(from));
+var __spread = (this && this.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
+    return ar;
 };
-var __values = (this && this.__values) || function(o) {
-    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+var __values = (this && this.__values) || function (o) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator], i = 0;
     if (m) return m.call(o);
-    if (o && typeof o.length === "number") return {
+    return {
         next: function () {
             if (o && i >= o.length) o = void 0;
             return { value: o && o[i++], done: !o };
         }
     };
-    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deserializeAction = exports.deserializeActionData = exports.serializeAction = exports.serializeActionData = exports.transactionHeader = exports.getTypesFromAbi = exports.getType = exports.createInitialTypes = exports.hexToUint8Array = exports.arrayToHex = exports.symbolToString = exports.stringToSymbol = exports.blockTimestampToDate = exports.dateToBlockTimestamp = exports.timePointSecToDate = exports.dateToTimePointSec = exports.timePointToDate = exports.dateToTimePoint = exports.supportedAbiVersion = exports.SerialBuffer = exports.SerializerState = void 0;
 var numeric = require("./chain-numeric");
 /** State for serialize() and deserialize() */
 var SerializerState = /** @class */ (function () {
@@ -318,7 +311,7 @@ var SerialBuffer = /** @class */ (function () {
             throw new Error('Expected string containing symbol_code');
         }
         var a = [];
-        a.push.apply(a, __spreadArray([], __read(this.textEncoder.encode(name)), false));
+        a.push.apply(a, __spread(this.textEncoder.encode(name)));
         while (a.length < 8) {
             a.push(0);
         }
@@ -340,7 +333,7 @@ var SerialBuffer = /** @class */ (function () {
     SerialBuffer.prototype.pushSymbol = function (_a) {
         var name = _a.name, precision = _a.precision;
         var a = [precision & 0xff];
-        a.push.apply(a, __spreadArray([], __read(this.textEncoder.encode(name)), false));
+        a.push.apply(a, __spread(this.textEncoder.encode(name)));
         while (a.length < 8) {
             a.push(0);
         }
@@ -552,9 +545,9 @@ function deserializeUnknown(buffer) {
     throw new Error('Don\'t know how to deserialize ' + this.name);
 }
 function serializeStruct(buffer, data, state, allowExtensions) {
-    var e_2, _a;
     if (state === void 0) { state = new SerializerState(); }
     if (allowExtensions === void 0) { allowExtensions = true; }
+    var e_2, _a;
     if (typeof data !== 'object') {
         throw new Error('expected object containing data: ' + JSON.stringify(data));
     }
@@ -589,9 +582,9 @@ function serializeStruct(buffer, data, state, allowExtensions) {
     }
 }
 function deserializeStruct(buffer, state, allowExtensions) {
-    var e_3, _a;
     if (state === void 0) { state = new SerializerState(); }
     if (allowExtensions === void 0) { allowExtensions = true; }
+    var e_3, _a;
     var result;
     if (this.base) {
         result = this.base.deserialize(buffer, state, allowExtensions);
@@ -625,7 +618,7 @@ function serializeVariant(buffer, data, state, allowExtensions) {
     }
     var i = this.fields.findIndex(function (field) { return field.name === data[0]; });
     if (i < 0) {
-        throw new Error("type \"".concat(data[0], "\" is not valid for variant"));
+        throw new Error("type \"" + data[0] + "\" is not valid for variant");
     }
     buffer.pushVaruint32(i);
     this.fields[i].type.serialize(buffer, data[1], state, allowExtensions);
@@ -633,7 +626,7 @@ function serializeVariant(buffer, data, state, allowExtensions) {
 function deserializeVariant(buffer, state, allowExtensions) {
     var i = buffer.getVaruint32();
     if (i >= this.fields.length) {
-        throw new Error("type index ".concat(i, " is not valid for variant"));
+        throw new Error("type index " + i + " is not valid for variant");
     }
     var field = this.fields[i];
     return [field.name, field.type.deserialize(buffer, state, allowExtensions)];
@@ -1005,7 +998,7 @@ function getTypesFromAbi(initialTypes, abi) {
                 type.base = getType(types, type.baseName);
             }
             try {
-                for (var _r = (e_9 = void 0, __values(type.fields)), _s = _r.next(); !_s.done; _s = _r.next()) {
+                for (var _r = __values(type.fields), _s = _r.next(); !_s.done; _s = _r.next()) {
                     var field = _s.value;
                     field.type = getType(types, field.typeName);
                 }
@@ -1042,7 +1035,7 @@ exports.transactionHeader = transactionHeader;
 function serializeActionData(contract, account, name, data, textEncoder, textDecoder) {
     var action = contract.actions.get(name);
     if (!action) {
-        throw new Error("Unknown action ".concat(name, " in contract ").concat(account));
+        throw new Error("Unknown action " + name + " in contract " + account);
     }
     var buffer = new SerialBuffer({ textEncoder: textEncoder, textDecoder: textDecoder });
     action.serialize(buffer, data);
@@ -1066,7 +1059,7 @@ function deserializeActionData(contract, account, name, data, textEncoder, textD
         data = hexToUint8Array(data);
     }
     if (!action) {
-        throw new Error("Unknown action ".concat(name, " in contract ").concat(account));
+        throw new Error("Unknown action " + name + " in contract " + account);
     }
     var buffer = new SerialBuffer({ textDecoder: textDecoder, textEncoder: textEncoder });
     buffer.pushArray(data);

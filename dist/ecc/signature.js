@@ -312,6 +312,7 @@ Signature.signHash = function(dataSha256, privateKey, transport, encoding = 'hex
     while (true) {
       ecsignature = ecdsa.sign(curve, dataSha256, privateKey.d, nonce++);
       der = ecsignature.toDER();
+      console.log(der.length)
       lenR = der[3];
       lenS = der[5 + lenR];
       if (lenR === 32 && lenS === 32) {
@@ -329,17 +330,20 @@ Signature.signHash = function(dataSha256, privateKey, transport, encoding = 'hex
     const hashedTx = []
     const FIO_ACCOUNT_PATH = `m/44'/235'/0'/0/0`
     hashedTx.push(dataSha256)
-    const txBuffer = buildTxBuffer([toBip32StringPath(FIO_ACCOUNT_PATH)], hashedTx)
+    const txBuffer = buildTxBuffer([FIO_ACCOUNT_PATH], hashedTx)
     if (transport) {
         transport.Send(0x70, 0xa4, 0, 0, Buffer.concat([txBuffer])).then((rsp)=> {
-            console.log(rsp)
+          console.log(rsp.data.toString('hex'))
+          // console.log(Buffer.concat([Buffer.from((rsp.data[64]+31).toString(16), 'hex'),rsp.data.slice[0,63]]).toString('hex'))
+          console.log(Buffer.concat([Buffer.from(i.toString(16), 'hex'), ecsignature.r.toBuffer(), ecsignature.s.toBuffer()]).toString('hex'))  
+
+        //     return Signature.fromBuffer(Buffer.concat([Buffer.from((rsp.data[64]+31).toString(16), 'hex'),rsp.data.slice[0,63]]))
+         return Signature.fromBuffer(Buffer.concat([Buffer.from(i.toString(16), 'hex'), ecsignature.r.toBuffer(), ecsignature.s.toBuffer()]))
+
         })
     } else {
-        rsp = Signature.fromBuffer(Buffer.concat([Buffer.from(i.toString(16), 'hex'), ecsignature.r.toBuffer(), ecsignature.s.toBuffer()]))
+        return Signature.fromBuffer(Buffer.concat([Buffer.from(i.toString(16), 'hex'), ecsignature.r.toBuffer(), ecsignature.s.toBuffer()]))
     }
-    console.log(rsp)
-
-    return rsp
 };
 
 Signature.fromBuffer = function(buf) {

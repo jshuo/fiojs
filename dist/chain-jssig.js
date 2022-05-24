@@ -1,10 +1,9 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -51,23 +50,19 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-        if (ar || !(i in from)) {
-            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-            ar[i] = from[i];
-        }
-    }
-    return to.concat(ar || Array.prototype.slice.call(from));
+var __spread = (this && this.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
+    return ar;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.JsSignatureProvider = void 0;
 var ecc = require('./ecc');
 var createHash = require('create-hash');
 var bippath = require('bip32-path');
-//@ts-ignore
 var FIO_ACCOUNT_PATH = "m/44'/235'/0'/0/0";
+//@ts-ignore
 function buildTxBuffer(bip32path, message, tp, chainId) {
+    if (tp === void 0) { tp = 0; }
+    if (chainId === void 0) { chainId = 0; }
     var head = [], data = [];
     var headerBuffer = Buffer.alloc(4);
     headerBuffer.writeUInt16LE(tp, 0);
@@ -84,7 +79,7 @@ function buildTxBuffer(bip32path, message, tp, chainId) {
     //@ts-ignore
     data.push(Buffer.concat([preparedTxLenBuf, message]));
     var singlepath = 1;
-    return Buffer.concat(__spreadArray(__spreadArray([Buffer.from([singlepath])], __read(head), false), __read(data), false));
+    return Buffer.concat(__spread([Buffer.from([singlepath])], head, data));
 }
 function hexToUint8Array(hex) {
     if (typeof hex !== 'string') {

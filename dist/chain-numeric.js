@@ -19,28 +19,21 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-        if (ar || !(i in from)) {
-            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-            ar[i] = from[i];
-        }
-    }
-    return to.concat(ar || Array.prototype.slice.call(from));
+var __spread = (this && this.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
+    return ar;
 };
-var __values = (this && this.__values) || function(o) {
-    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+var __values = (this && this.__values) || function (o) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator], i = 0;
     if (m) return m.call(o);
-    if (o && typeof o.length === "number") return {
+    return {
         next: function () {
             if (o && i >= o.length) o = void 0;
             return { value: o && o[i++], done: !o };
         }
     };
-    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.arrayToHex = exports.signatureToString = exports.stringToSignature = exports.privateKeyToString = exports.stringToPrivateKey = exports.convertLegacyPublicKeys = exports.convertLegacyPublicKey = exports.publicKeyToString = exports.stringToPublicKey = exports.signatureDataSize = exports.privateKeyDataSize = exports.publicKeyDataSize = exports.KeyType = exports.base64ToBinary = exports.binaryToBase58 = exports.base58ToBinary = exports.signedBinaryToDecimal = exports.binaryToDecimal = exports.signedDecimalToBinary = exports.decimalToBinary = exports.negate = exports.isNegative = void 0;
 var ripemd160 = require('./ripemd').RIPEMD160.hash;
 var base58Chars = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
 var base64Chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
@@ -142,7 +135,7 @@ function binaryToDecimal(bignum, minDigits) {
         }
     }
     result.reverse();
-    return String.fromCharCode.apply(String, __spreadArray([], __read(result), false));
+    return String.fromCharCode.apply(String, __spread(result));
 }
 exports.binaryToDecimal = binaryToDecimal;
 /**
@@ -188,8 +181,8 @@ exports.base58ToBinary = base58ToBinary;
  * @param minDigits 0-pad result to this many digits
  */
 function binaryToBase58(bignum, minDigits) {
-    var e_1, _a, e_2, _b;
     if (minDigits === void 0) { minDigits = 1; }
+    var e_1, _a, e_2, _b;
     var result = [];
     try {
         for (var bignum_1 = __values(bignum), bignum_1_1 = bignum_1.next(); !bignum_1_1.done; bignum_1_1 = bignum_1.next()) {
@@ -232,7 +225,7 @@ function binaryToBase58(bignum, minDigits) {
         finally { if (e_2) throw e_2.error; }
     }
     result.reverse();
-    return String.fromCharCode.apply(String, __spreadArray([], __read(result), false));
+    return String.fromCharCode.apply(String, __spread(result));
 }
 exports.binaryToBase58 = binaryToBase58;
 /** Convert an unsigned base-64 number in `s` to a bignum */
